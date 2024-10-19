@@ -1,11 +1,13 @@
-﻿Imports System.Data.SqlClient
+﻿Imports System.Configuration
+Imports System.Data.SqlClient
 Imports CapaEntidad
 
 
 Public Class CD_Venta
 
 
-    Private _cadenaConexion As String = "Data Source=DESKTOP-90UV9EI;Initial Catalog=pruebademo;Integrated Security=True"
+
+    Private _cadenaConexion As String = ConfigurationManager.ConnectionStrings("MiConexion").ConnectionString
 
     Public Sub ProbarConexion()
         ' Crear una nueva conexión SQL utilizando la cadena de conexión

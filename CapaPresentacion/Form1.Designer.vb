@@ -146,13 +146,13 @@ Partial Class Form1
         ' ProductosToolStripMenuItem
         ' 
         ProductosToolStripMenuItem.Name = "ProductosToolStripMenuItem"
-        ProductosToolStripMenuItem.Size = New Size(128, 22)
+        ProductosToolStripMenuItem.Size = New Size(180, 22)
         ProductosToolStripMenuItem.Text = "Productos"
         ' 
         ' VentasToolStripMenuItem
         ' 
         VentasToolStripMenuItem.Name = "VentasToolStripMenuItem"
-        VentasToolStripMenuItem.Size = New Size(128, 22)
+        VentasToolStripMenuItem.Size = New Size(180, 22)
         VentasToolStripMenuItem.Text = "Ventas"
         ' 
         ' txtIndex

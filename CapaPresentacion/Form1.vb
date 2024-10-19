@@ -9,7 +9,7 @@ Public Class Form1
     Dim NegocioCliente As New CN_Cliente()
     Dim negocioProducto As New CN_Producto()
 
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub Form1_Load(sender As Object, e As EventArgs)
 
         'Se cargan de manera predefinida los productos y los clientes al abrir el formulario
 
@@ -176,6 +176,7 @@ Public Class Form1
 
 
     End Sub
+
 
 
 
