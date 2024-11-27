@@ -57,6 +57,30 @@ Public Class CN_Venta
     End Function
 
 
+    Public Function GetId() As Integer
+
+        Dim ultimoId = datosVenta.getUltimoId()
+
+        If ultimoId <= 0 Then
+
+
+
+        End If
+
+        Return ultimoId
+
+    End Function
+
+
+    Public Function CalcularTotal(venta As Venta)
+
+
+
+        Return datosVenta.CalcularTotal(venta)
+
+    End Function
+
+
     Public Function DameProducto(ByVal nombre As String) As Decimal
 
         Dim IdProducto As Integer
@@ -99,5 +123,36 @@ Public Class CN_Venta
 
 
     End Sub
+
+    Public Function Filtrar(searchValue As String, searchField As String) As List(Of Venta)
+
+        Dim productos As List(Of Venta) = datosVenta.ObtenerTodasLasVentas()
+
+        ' Verifica si el searchValue es un número válido si el campo de búsqueda es "Precio"
+        Dim esNumero As Boolean = Decimal.TryParse(searchValue, New Decimal())
+
+        ' Filtrar los productos en función del campo seleccionado
+        Dim ventasFiltradas As List(Of Venta) = productos.Where(
+            Function(p)
+                Select Case searchField
+
+                    Case "Total"
+                        ' Solo realiza la comparación si el valor de búsqueda es un número válido
+                        If esNumero Then
+                            Dim total As Decimal = CDec(searchValue) ' Convertimos el valor a Decimal
+                            Return p.Total = total ' Comparamos el precio
+                        Else
+                            Return False ' Si no es un número, no coincide
+                        End If
+
+                    Case Else
+                        Return False
+                End Select
+            End Function
+        ).ToList()
+
+        Return ventasFiltradas
+    End Function
+
 
 End Class

@@ -35,9 +35,13 @@ Partial Class FrmProductos
         MenusToolStripMenuItem = New ToolStripMenuItem()
         ProductosToolStripMenuItem = New ToolStripMenuItem()
         VentasToolStripMenuItem = New ToolStripMenuItem()
+        RegistrarVentaToolStripMenuItem = New ToolStripMenuItem()
         txtIndex = New TextBox()
         txtCategoria = New TextBox()
         btnExcel = New Button()
+        cboSearch = New ComboBox()
+        txtSearch = New TextBox()
+        btnClear = New Button()
         CType(dgvProducts, ComponentModel.ISupportInitialize).BeginInit()
         MenuStrip1.SuspendLayout()
         SuspendLayout()
@@ -144,9 +148,16 @@ Partial Class FrmProductos
         ' 
         ' VentasToolStripMenuItem
         ' 
+        VentasToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {RegistrarVentaToolStripMenuItem})
         VentasToolStripMenuItem.Name = "VentasToolStripMenuItem"
         VentasToolStripMenuItem.Size = New Size(116, 22)
         VentasToolStripMenuItem.Text = "Ventas"
+        ' 
+        ' RegistrarVentaToolStripMenuItem
+        ' 
+        RegistrarVentaToolStripMenuItem.Name = "RegistrarVentaToolStripMenuItem"
+        RegistrarVentaToolStripMenuItem.Size = New Size(152, 22)
+        RegistrarVentaToolStripMenuItem.Text = "Registrar Venta"
         ' 
         ' txtIndex
         ' 
@@ -171,11 +182,38 @@ Partial Class FrmProductos
         btnExcel.Text = "Descargar excel"
         btnExcel.UseVisualStyleBackColor = True
         ' 
+        ' cboSearch
+        ' 
+        cboSearch.FormattingEnabled = True
+        cboSearch.Location = New Point(698, 56)
+        cboSearch.Name = "cboSearch"
+        cboSearch.Size = New Size(171, 23)
+        cboSearch.TabIndex = 41
+        ' 
+        ' txtSearch
+        ' 
+        txtSearch.Location = New Point(875, 56)
+        txtSearch.Name = "txtSearch"
+        txtSearch.Size = New Size(171, 23)
+        txtSearch.TabIndex = 43
+        ' 
+        ' btnClear
+        ' 
+        btnClear.Location = New Point(621, 55)
+        btnClear.Name = "btnClear"
+        btnClear.Size = New Size(71, 23)
+        btnClear.TabIndex = 45
+        btnClear.Text = "Limpiar"
+        btnClear.UseVisualStyleBackColor = True
+        ' 
         ' FrmProductos
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1104, 442)
+        Controls.Add(btnClear)
+        Controls.Add(txtSearch)
+        Controls.Add(cboSearch)
         Controls.Add(btnExcel)
         Controls.Add(txtCategoria)
         Controls.Add(btnDelete)
@@ -214,4 +252,8 @@ Partial Class FrmProductos
     Friend WithEvents txtIndex As TextBox
     Friend WithEvents txtCategoria As TextBox
     Friend WithEvents btnExcel As Button
+    Friend WithEvents RegistrarVentaToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents cboSearch As ComboBox
+    Friend WithEvents txtSearch As TextBox
+    Friend WithEvents btnClear As Button
 End Class

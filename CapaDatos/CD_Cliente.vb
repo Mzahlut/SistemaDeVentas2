@@ -29,6 +29,10 @@ Public Class CD_Cliente
     End Sub
 
 
+
+
+
+
     Public Sub Insertar(ByVal cliente As Cliente)
 
         Dim conexion As New SqlConnection(_cadenaConexion)
@@ -71,13 +75,26 @@ Public Class CD_Cliente
 
     End Sub
 
+    Public Function CargarDatosCliente() As List(Of Cliente)
 
+        Dim conexion As New SqlConnection(_cadenaConexion)
+        conexion.Open()
+        Dim query As String = "SELECT COLUMN_NAME 
+                                FROM INFORMATION_SCHEMA.COLUMNS
+                                WHERE TABLE_NAME = 'clientes';"
+        Dim cmd As New SqlCommand(query, conexion)
+
+        cmd.ExecuteNonQuery()
+        conexion.Close()
+
+
+    End Function
 
     Public Function ListarClientes() As DataSet
 
         Dim conexion As New SqlConnection(_cadenaConexion)
         conexion.Open()
-        Dim query As String = "SELECT * FROM CLIENTES"
+        Dim query As String = "select ID, Cliente as Nombre, Telefono, Correo as Email from clientes"
 
         Dim adapter As SqlDataAdapter
         Dim dataset As New DataSet()
@@ -135,6 +152,39 @@ Public Class CD_Cliente
 
 
     End Sub
+
+    Public Function ObtenerTodosLosClientes() As List(Of Cliente)
+        Dim clientes As New List(Of Cliente)
+
+
+        Using connection As New SqlConnection(_cadenaConexion)
+
+            Dim query As String = "SELECT Id, Cliente, Telefono, Correo FROM Clientes"
+
+
+            Using command As New SqlCommand(query, connection)
+
+                connection.Open()
+
+                Using reader As SqlDataReader = command.ExecuteReader()
+                    While reader.Read()
+
+                        Dim cliente As New Cliente() With {
+                            .Id = reader("ID"),
+                            .Nombre = reader("Cliente").ToString(),
+                            .Telefono = reader("Telefono").ToString(),
+                            .Email = reader("Correo").ToString()
+                        }
+
+                        clientes.Add(cliente)
+                    End While
+                End Using
+            End Using
+        End Using
+
+        '
+        Return clientes
+    End Function
 
 
 

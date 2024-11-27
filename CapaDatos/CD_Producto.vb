@@ -143,7 +143,7 @@ Public Class CD_Producto
 
         Dim conexion As New SqlConnection(_cadenaConexion)
         conexion.Open()
-        Dim query As String = "SELECT * FROM PRODUCTOS"
+        Dim query As String = "select ID, Nombre, Precio as PrecioUnitario, Categoria from productos"
 
         Dim adapter As SqlDataAdapter
         Dim dataset As New DataSet()
@@ -156,6 +156,39 @@ Public Class CD_Producto
 
     End Function
 
+
+    Public Function ObtenerTodosLosProductos() As List(Of Producto)
+        Dim productos As New List(Of Producto)
+
+
+        Using connection As New SqlConnection(_cadenaConexion)
+
+            Dim query As String = "SELECT Id, Nombre, Precio, Categoria FROM Productos"
+
+
+            Using command As New SqlCommand(query, connection)
+
+                connection.Open()
+
+                Using reader As SqlDataReader = command.ExecuteReader()
+                    While reader.Read()
+
+                        Dim producto As New Producto() With {
+                            .Id = reader("ID"),
+                            .Nombre = reader("Nombre").ToString(),
+                            .PrecioUnitario = Convert.ToInt32(reader("Precio")),
+                            .Categoria = reader("Categoria").ToString()
+                        }
+
+                        productos.Add(producto)
+                    End While
+                End Using
+            End Using
+        End Using
+
+        '
+        Return productos
+    End Function
 
 
 

@@ -36,8 +36,12 @@ Partial Class Form1
         MenusToolStripMenuItem = New ToolStripMenuItem()
         ProductosToolStripMenuItem = New ToolStripMenuItem()
         VentasToolStripMenuItem = New ToolStripMenuItem()
+        RegistrarVentaToolStripMenuItem = New ToolStripMenuItem()
         txtIndex = New TextBox()
         btnExcel = New Button()
+        cboSearch = New ComboBox()
+        txtSearch = New TextBox()
+        btnClear = New Button()
         CType(dgvClients, ComponentModel.ISupportInitialize).BeginInit()
         MenuStrip1.SuspendLayout()
         SuspendLayout()
@@ -146,14 +150,21 @@ Partial Class Form1
         ' ProductosToolStripMenuItem
         ' 
         ProductosToolStripMenuItem.Name = "ProductosToolStripMenuItem"
-        ProductosToolStripMenuItem.Size = New Size(180, 22)
+        ProductosToolStripMenuItem.Size = New Size(128, 22)
         ProductosToolStripMenuItem.Text = "Productos"
         ' 
         ' VentasToolStripMenuItem
         ' 
+        VentasToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {RegistrarVentaToolStripMenuItem})
         VentasToolStripMenuItem.Name = "VentasToolStripMenuItem"
-        VentasToolStripMenuItem.Size = New Size(180, 22)
+        VentasToolStripMenuItem.Size = New Size(128, 22)
         VentasToolStripMenuItem.Text = "Ventas"
+        ' 
+        ' RegistrarVentaToolStripMenuItem
+        ' 
+        RegistrarVentaToolStripMenuItem.Name = "RegistrarVentaToolStripMenuItem"
+        RegistrarVentaToolStripMenuItem.Size = New Size(152, 22)
+        RegistrarVentaToolStripMenuItem.Text = "Registrar venta"
         ' 
         ' txtIndex
         ' 
@@ -171,12 +182,39 @@ Partial Class Form1
         btnExcel.Text = "Descargar excel"
         btnExcel.UseVisualStyleBackColor = True
         ' 
+        ' cboSearch
+        ' 
+        cboSearch.FormattingEnabled = True
+        cboSearch.Location = New Point(667, 55)
+        cboSearch.Name = "cboSearch"
+        cboSearch.Size = New Size(171, 23)
+        cboSearch.TabIndex = 40
+        ' 
+        ' txtSearch
+        ' 
+        txtSearch.Location = New Point(844, 55)
+        txtSearch.Name = "txtSearch"
+        txtSearch.Size = New Size(171, 23)
+        txtSearch.TabIndex = 42
+        ' 
+        ' btnClear
+        ' 
+        btnClear.Location = New Point(590, 55)
+        btnClear.Name = "btnClear"
+        btnClear.Size = New Size(71, 23)
+        btnClear.TabIndex = 44
+        btnClear.Text = "Limpiar"
+        btnClear.UseVisualStyleBackColor = True
+        ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         AutoSize = True
         ClientSize = New Size(1104, 442)
+        Controls.Add(btnClear)
+        Controls.Add(txtSearch)
+        Controls.Add(cboSearch)
         Controls.Add(btnExcel)
         Controls.Add(txtIndex)
         Controls.Add(btnDelete)
@@ -214,4 +252,8 @@ Partial Class Form1
     Friend WithEvents VentasToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents txtIndex As TextBox
     Friend WithEvents btnExcel As Button
+    Friend WithEvents RegistrarVentaToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents cboSearch As ComboBox
+    Friend WithEvents txtSearch As TextBox
+    Friend WithEvents btnClear As Button
 End Class

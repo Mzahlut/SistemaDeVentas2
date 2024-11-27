@@ -8,19 +8,34 @@ Public Class Form1
 
     Dim NegocioCliente As New CN_Cliente()
     Dim negocioProducto As New CN_Producto()
+    Dim primeraCarga As Boolean = True
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-    Private Sub Form1_Load(sender As Object, e As EventArgs)
 
-        'Se cargan de manera predefinida los productos y los clientes al abrir el formulario
+        If primeraCarga Then
 
-        NegocioCliente.CargarClientesPredefinidos()
-        negocioProducto.CargarProductosPredefinidos()
+            NegocioCliente.BorrarClientes()
 
-        Load()
+            NegocioCliente.CargarClientesPredefinidos()
+            negocioProducto.CargarProductosPredefinidos()
+
+
+            cboSearch.Items.Add("Cliente")
+            cboSearch.Items.Add("Telefono")
+            cboSearch.Items.Add("Correo")
+            cboSearch.SelectedIndex = 0 ' Selecciona Nombre por defecto
+
+            Load()
+
+
+            primeraCarga = False
+        End If
 
 
 
     End Sub
+
+
 
 
     Private Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click
@@ -65,6 +80,8 @@ Public Class Form1
         txtName.Text = ""
         txtPhone.Text = ""
         txtEmail.Text = ""
+        cboSearch.SelectedIndex = 0
+        txtSearch.Text = ""
 
     End Sub
 
@@ -95,9 +112,9 @@ Public Class Form1
 
 
         txtIndex.Text = dgvClients.CurrentRow.Cells("ID").Value
-        txtName.Text = dgvClients.CurrentRow.Cells("Cliente").Value
+        txtName.Text = dgvClients.CurrentRow.Cells("Nombre").Value
         txtPhone.Text = dgvClients.CurrentRow.Cells("Telefono").Value
-        txtEmail.Text = dgvClients.CurrentRow.Cells("Correo").Value
+        txtEmail.Text = dgvClients.CurrentRow.Cells("Email").Value
 
 
 
@@ -108,9 +125,10 @@ Public Class Form1
 
     Private Sub ProductosToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ProductosToolStripMenuItem.Click
 
+        Dim frmClientes = Me
         Dim frmProductos = New FrmProductos()
-
         frmProductos.Show()
+        Me.Hide()
 
 
 
@@ -119,9 +137,10 @@ Public Class Form1
 
     Private Sub VentasToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles VentasToolStripMenuItem.Click
 
+        Dim frmClientes = Me
         Dim frmVenta = New FrmVentas()
-
         frmVenta.Show()
+        Me.Hide()
 
     End Sub
 
@@ -135,18 +154,18 @@ Public Class Form1
 
             Dim dt As New DataTable()
             dt.Columns.Add("Id", GetType(String))
-            dt.Columns.Add("Cliente", GetType(String))
+            dt.Columns.Add("Nombre", GetType(String))
             dt.Columns.Add("Telefono", GetType(String))
-            dt.Columns.Add("Correo", GetType(String))
+            dt.Columns.Add("Email", GetType(String))
 
 
             For Each row As DataGridViewRow In dgvClients.Rows
                 If row.Visible Then
                     dt.Rows.Add(New Object() {
                         If(row.Cells("Id").Value IsNot Nothing, row.Cells("Id").Value.ToString(), ""),
-                        If(row.Cells("Cliente").Value IsNot Nothing, row.Cells("Cliente").Value.ToString(), ""),
+                        If(row.Cells("Nombre").Value IsNot Nothing, row.Cells("Nombre").Value.ToString(), ""),
                         If(row.Cells("Telefono").Value IsNot Nothing, row.Cells("Telefono").Value.ToString(), ""),
-                        If(row.Cells("Correo").Value IsNot Nothing, row.Cells("Correo").Value.ToString(), "")
+                        If(row.Cells("Email").Value IsNot Nothing, row.Cells("Email").Value.ToString(), "")
                     })
                 End If
             Next
@@ -177,8 +196,45 @@ Public Class Form1
 
     End Sub
 
+    Private Sub RegistrarVentaToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RegistrarVentaToolStripMenuItem.Click
+
+        Dim frmRegister = New FrmRegister()
+        Dim frmClientes = Me
 
 
+        frmRegister.LimpiarTablaVentas()
+        frmRegister.Show()
+        Me.Hide()
+
+
+
+    End Sub
+
+
+    Private Sub Form1_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
+        Application.Exit()
+    End Sub
+
+    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
+
+        Dim searchValue As String = txtSearch.Text.ToLower()
+        Dim searchField As String = cboSearch.SelectedItem.ToString()
+
+
+        Dim clientesFiltrados As List(Of Cliente) = NegocioCliente.Filtrar(searchValue, searchField)
+
+
+        dgvClients.DataSource = clientesFiltrados
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs)
+
+        cboSearch.SelectedIndex = -1
+        txtSearch.Text = ""
+
+        txtSearch.Focus()
+
+    End Sub
 
 
 End Class

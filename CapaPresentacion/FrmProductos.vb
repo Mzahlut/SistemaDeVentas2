@@ -6,11 +6,21 @@ Public Class FrmProductos
 
     Dim negocioProducto As New CN_Producto()
 
+    Dim primeraCarga As Boolean = True
     Private Sub FrmProductos_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        If primeraCarga Then
 
-        'se cargan los productos de manera predeterminada
-        negocioProducto.CargarProductosPredefinidos()
-        Load()
+
+            negocioProducto.BorrarProductos()
+            negocioProducto.CargarProductosPredefinidos()
+            cboSearch.Items.Add("Nombre")
+            cboSearch.Items.Add("Precio")
+            cboSearch.Items.Add("Categoria")
+            Load()
+
+            primeraCarga = False
+
+        End If
 
 
     End Sub
@@ -58,6 +68,8 @@ Public Class FrmProductos
         txtCliente.Text = ""
         txtPrice.Text = ""
         txtCategoria.Text = ""
+        cboSearch.SelectedIndex = 0
+        txtSearch.Text = ""
 
     End Sub
 
@@ -89,7 +101,7 @@ Public Class FrmProductos
 
         txtIndex.Text = dgvProducts.CurrentRow.Cells("ID").Value
         txtCliente.Text = dgvProducts.CurrentRow.Cells("Nombre").Value
-        txtPrice.Text = dgvProducts.CurrentRow.Cells("Precio").Value
+        txtPrice.Text = dgvProducts.CurrentRow.Cells("PrecioUnitario").Value
         txtCategoria.Text = dgvProducts.CurrentRow.Cells("Categoria").Value
 
 
@@ -97,8 +109,9 @@ Public Class FrmProductos
 
     Private Sub ProductosToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ProductosToolStripMenuItem.Click
 
+        Dim frmProductos = Me
         Dim frmClientes = New Form1()
-
+        frmProductos.Hide()
         frmClientes.Show()
 
 
@@ -107,8 +120,10 @@ Public Class FrmProductos
 
     Private Sub VentasToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles VentasToolStripMenuItem.Click
 
+        Dim frmProductos = Me
         Dim frmVentas = New FrmVentas()
 
+        frmProductos.Hide()
         frmVentas.Show()
 
     End Sub
@@ -124,19 +139,19 @@ Public Class FrmProductos
             Dim dt As New DataTable()
             dt.Columns.Add("Id", GetType(String))
             dt.Columns.Add("Nombre", GetType(String))
-            dt.Columns.Add("Precio", GetType(String))
+            dt.Columns.Add("PrecioUnitario", GetType(String))
             dt.Columns.Add("Categoria", GetType(String))
 
 
             For Each row As DataGridViewRow In dgvProducts.Rows
-                If row.Visible Then
-                    dt.Rows.Add(New Object() {
+
+                dt.Rows.Add(New Object() {
                         If(row.Cells("Id").Value IsNot Nothing, row.Cells("Id").Value.ToString(), ""),
                         If(row.Cells("Nombre").Value IsNot Nothing, row.Cells("Nombre").Value.ToString(), ""),
-                        If(row.Cells("Precio").Value IsNot Nothing, row.Cells("Precio").Value.ToString(), ""),
+                        If(row.Cells("PrecioUnitario").Value IsNot Nothing, row.Cells("PrecioUnitario").Value.ToString(), ""),
                         If(row.Cells("Categoria").Value IsNot Nothing, row.Cells("Categoria").Value.ToString(), "")
                     })
-                End If
+
             Next
 
 
@@ -165,8 +180,42 @@ Public Class FrmProductos
 
     End Sub
 
+    Private Sub RegistrarVentaToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RegistrarVentaToolStripMenuItem.Click
+
+        Dim frmRegister = New FrmRegister()
+        Dim frmProductos = Me
 
 
+        frmRegister.LimpiarTablaVentas()
+
+        frmProductos.Hide()
+        frmRegister.Show()
 
 
+    End Sub
+
+    Private Sub FrmProductos_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
+        Application.Exit()
+    End Sub
+
+    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
+
+        ' Obtener el texto de búsqueda y el campo seleccionado
+        Dim searchValue As String = txtSearch.Text.ToLower()
+        Dim searchField As String = cboSearch.SelectedItem.ToString()
+
+        ' Llamar al método de negocio para filtrar los clientes
+        Dim clientesFiltrados As List(Of Producto) = negocioProducto.Filtrar(searchValue, searchField)
+
+        ' Actualizar el DataGridView con los resultados filtrados
+        dgvProducts.DataSource = clientesFiltrados
+
+
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+
+        Clear()
+
+    End Sub
 End Class

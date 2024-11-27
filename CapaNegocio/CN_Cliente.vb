@@ -35,6 +35,29 @@ Public Class CN_Cliente
 
     End Function
 
+    Public Function Filtrar(searchValue As String, searchField As String) As List(Of Cliente)
+
+        Dim clientes As List(Of Cliente) = datosCliente.ObtenerTodosLosClientes()
+
+        Dim clientesFiltrados As List(Of Cliente) = clientes.Where(
+            Function(c)
+                Select Case searchField
+                    Case "Cliente"
+                        Return c.Nombre.ToLower().Contains(searchValue.ToLower())
+                    Case "Telefono"
+                        Return c.Telefono.ToLower().Contains(searchValue.ToLower())
+                    Case "Correo"
+                        Return c.Email.ToLower().Contains(searchValue.ToLower())
+                    Case Else
+                        Return False
+                End Select
+            End Function
+        ).ToList()
+
+        Return clientesFiltrados
+    End Function
+
+
     Public Sub PruebaSQL()
 
         datosCliente.ProbarConexion()

@@ -84,4 +84,36 @@ Public Class CN_Producto
 
     End Sub
 
+    Public Function Filtrar(searchValue As String, searchField As String) As List(Of Producto)
+
+        Dim productos As List(Of Producto) = datosProducto.ObtenerTodosLosProductos()
+
+        ' Verifica si el searchValue es un número válido si el campo de búsqueda es "Precio"
+        Dim esNumero As Boolean = Decimal.TryParse(searchValue, New Decimal())
+
+        ' Filtrar los productos en función del campo seleccionado
+        Dim productosFiltrados As List(Of Producto) = productos.Where(
+            Function(p)
+                Select Case searchField
+                    Case "Nombre"
+                        Return p.Nombre.ToLower().Contains(searchValue.ToLower())
+                    Case "Precio"
+                        ' Solo realiza la comparación si el valor de búsqueda es un número válido
+                        If esNumero Then
+                            Dim precioBuscar As Decimal = CDec(searchValue) ' Convertimos el valor a Decimal
+                            Return p.PrecioUnitario = precioBuscar ' Comparamos el precio
+                        Else
+                            Return False ' Si no es un número, no coincide
+                        End If
+                    Case "Categoria"
+                        Return p.Categoria.ToLower().Contains(searchValue.ToLower())
+                    Case Else
+                        Return False
+                End Select
+            End Function
+        ).ToList()
+
+        Return productosFiltrados
+    End Function
+
 End Class

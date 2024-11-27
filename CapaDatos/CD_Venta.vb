@@ -1,5 +1,6 @@
 ﻿Imports System.Configuration
 Imports System.Data.SqlClient
+Imports System.Windows.Documents
 Imports CapaEntidad
 
 
@@ -68,6 +69,26 @@ Public Class CD_Venta
 
     End Function
 
+
+    Public Function CalcularTotal(ByVal venta As Venta)
+        Dim lista = venta.ListaItems
+        Dim total As Integer
+
+        For Each item As VentaItem In lista
+
+
+            total += item.TotalItem
+
+        Next
+
+
+
+        Return total
+
+
+
+    End Function
+
     Public Sub InsertItems(items As List(Of VentaItem), IdVenta As Integer)
 
         For Each item In items
@@ -113,7 +134,8 @@ Public Class CD_Venta
 
         Dim conexion As New SqlConnection(_cadenaConexion)
         conexion.Open()
-        Dim query As String = "SELECT * FROM VENTAS"
+        Dim query As String = "select v.ID, c.Cliente, c.Telefono, v.Fecha, v.Total from ventas v
+join clientes c on v.IDCliente = c.ID"
 
         Dim adapter As SqlDataAdapter
         Dim dataset As New DataSet()
@@ -259,6 +281,38 @@ Public Class CD_Venta
 
 
     End Sub
+
+
+    Public Function ObtenerTodasLasVentas() As List(Of Venta)
+        Dim ventas As New List(Of Venta)
+
+
+        Using connection As New SqlConnection(_cadenaConexion)
+
+            Dim query As String = "select v.ID, c.Cliente, c.Telefono, v.Fecha, v.Total from ventas v join clientes c on v.IDCliente = c.ID"
+
+            'SE FILTRA SOLO POR IMPORTE TOTAL
+            Using command As New SqlCommand(query, connection)
+
+                connection.Open()
+
+                Using reader As SqlDataReader = command.ExecuteReader()
+                    While reader.Read()
+
+                        Dim producto As New Venta() With {
+                            .Id = reader("ID"),
+                            .Total = Convert.ToInt32(reader("Total"))
+                        }
+
+                        ventas.Add(producto)
+                    End While
+                End Using
+            End Using
+        End Using
+
+        '
+        Return ventas
+    End Function
 
 
 

@@ -8,14 +8,21 @@ Public Class FrmVentas
 
     Dim negocioVenta As New CN_Venta()
 
+    Dim primeraCarga As Boolean = True
+
     Private Sub FrmVentas_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        Cargar()
+        If primeraCarga Then
 
-        CargarProductosEnComboBox()
 
-        CargarClientesEnComboBox()
+            Cargar()
 
+            CargarProductosEnComboBox()
+            CargarClientesEnComboBox()
+
+            primeraCarga = False
+
+        End If
 
     End Sub
 
@@ -23,13 +30,12 @@ Public Class FrmVentas
 
 
     Private Sub CargarProductosEnComboBox()
-        ' Llamar al método de la capa de negocio para obtener la lista de productos
+
         Dim productos As List(Of Producto) = negocioVenta.ObtenerProductos()
 
-        ' Limpiar el ComboBox antes de llenarlo
         cboProducts.Items.Clear()
 
-        ' Llenar el ComboBox con los productos
+
         For Each producto As Producto In productos
             cboProducts.Items.Add(New With {
             .Id = producto.Id,
@@ -37,20 +43,19 @@ Public Class FrmVentas
         })
         Next
 
-        ' Establecer DisplayMember y ValueMember
         cboProducts.DataSource = productos
         cboProducts.DisplayMember = "Nombre"
         cboProducts.ValueMember = "Id"
     End Sub
 
     Private Sub CargarClientesEnComboBox()
-        ' Llamar al método de la capa de negocio para obtener la lista de clientes
+
         Dim clientes As List(Of Cliente) = negocioVenta.ObtenerClientes()
 
-        ' Limpiar el ComboBox antes de llenarlo
+
         cboClients.Items.Clear()
 
-        ' Llenar el ComboBox con los clientes
+
         For Each cliente As Cliente In clientes
             cboClients.Items.Add(New With {
             .Id = cliente.Id,
@@ -58,7 +63,7 @@ Public Class FrmVentas
         })
         Next
 
-        ' Establecer DisplayMember y ValueMember
+
         cboClients.DataSource = clientes
         cboClients.DisplayMember = "Nombre"
         cboClients.ValueMember = "Id"
@@ -74,25 +79,25 @@ Public Class FrmVentas
         Dim productoSeleccionado As Producto = CType(cboProducts.SelectedItem, Producto)
         Dim clienteSeleccionado As Cliente = CType(cboClients.SelectedItem, Cliente)
 
-        ' Validar que se haya seleccionado un producto y un cliente
+
         If productoSeleccionado Is Nothing OrElse clienteSeleccionado Is Nothing Then
             MessageBox.Show("Por favor, seleccione un cliente y un producto.")
             Return
         End If
 
         ' Obtener el IdCliente y la fecha
+        venta.Id = txtIndex.Text
         venta.IdCliente = clienteSeleccionado.Id
         venta.Fecha = Date.Now()
 
-        ' Declarar la cantidad
         Dim cantidad As Integer
 
-        ' Validar la cantidad ingresada
+
         If Integer.TryParse(txtCantidad.Text, cantidad) AndAlso cantidad > 0 Then
-            ' Calcular el total basado en el precio unitario del producto
+
             venta.Total = cantidad * productoSeleccionado.PrecioUnitario
         Else
-            ' Si la cantidad es inválida, mostrar mensaje de error
+
             MessageBox.Show("Por favor, ingrese una cantidad válida.")
             Return
         End If
@@ -112,6 +117,7 @@ Public Class FrmVentas
         txtIndex.Text = ""
         cboClients.SelectedIndex = 1
         txtCantidad.Text = ""
+
 
 
     End Sub
@@ -141,11 +147,25 @@ Public Class FrmVentas
 
     Private Sub dgvVentas_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvVentas.CellDoubleClick
 
-        ' Asignar el valor del ID a txtIndex
-        txtIndex.Text = dgvVentas.CurrentRow.Cells("Id").Value.ToString()
+        Dim productoSeleccionado As Producto = CType(cboProducts.SelectedItem, Producto)
+        Dim clienteSeleccionado As Cliente = CType(cboClients.SelectedItem, Cliente)
+        Dim venta As New Venta()
 
-        ' Seleccionar el cliente en el ComboBox basado en el valor de "IdCliente"
-        Dim idCliente As Integer = CInt(dgvVentas.CurrentRow.Cells("IdCliente").Value)
+
+
+
+
+        Dim idVenta As Integer
+        If Integer.TryParse(dgvVentas.CurrentRow.Cells("ID").Value.ToString(), idVenta) Then
+            txtIndex.Text = idVenta.ToString()
+        End If
+
+
+        cboClients.SelectedItem = clienteSeleccionado.Id
+        cboProducts.SelectedItem = productoSeleccionado.Id
+
+
+        Dim idCliente As Integer = CInt(dgvVentas.CurrentRow.Cells("ID").Value)
         For Each cliente As Cliente In cboClients.Items
             If cliente.Id = idCliente Then
                 cboClients.SelectedItem = cliente
@@ -165,8 +185,8 @@ Public Class FrmVentas
         Else
 
             Dim dt As New DataTable()
-            dt.Columns.Add("ID", GetType(String))
-            dt.Columns.Add("IDCliente", GetType(String))
+            dt.Columns.Add("Cliente", GetType(String))
+            dt.Columns.Add("Telefono", GetType(String))
             dt.Columns.Add("Fecha", GetType(String))
             dt.Columns.Add("Total", GetType(String))
 
@@ -174,8 +194,8 @@ Public Class FrmVentas
             For Each row As DataGridViewRow In dgvVentas.Rows
                 If row.Visible Then
                     dt.Rows.Add(New Object() {
-                        If(row.Cells("ID").Value IsNot Nothing, row.Cells("ID").Value.ToString(), ""),
-                        If(row.Cells("IDCliente").Value IsNot Nothing, row.Cells("IDCliente").Value.ToString(), ""),
+                        If(row.Cells("Cliente").Value IsNot Nothing, row.Cells("Cliente").Value.ToString(), ""),
+                        If(row.Cells("Telefono").Value IsNot Nothing, row.Cells("Telefono").Value.ToString(), ""),
                         If(row.Cells("Fecha").Value IsNot Nothing, row.Cells("Fecha").Value.ToString(), ""),
                         If(row.Cells("Total").Value IsNot Nothing, row.Cells("Total").Value.ToString(), "")
                     })
@@ -209,17 +229,39 @@ Public Class FrmVentas
 
     Private Sub ProductosToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ProductosToolStripMenuItem.Click
 
+        Dim frmVentas = Me
         Dim frmProductos = New FrmProductos()
-
+        frmVentas.Hide()
         frmProductos.Show()
 
     End Sub
 
     Private Sub VentasToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles VentasToolStripMenuItem.Click
 
+        Dim frmVentas = Me
         Dim frmClientes = New Form1()
 
+        frmVentas.Hide()
         frmClientes.Show()
 
     End Sub
+
+    Private Sub RegistrarVentaToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RegistrarVentaToolStripMenuItem.Click
+
+        Dim FrmVentas = Me
+        Dim frmRegister = New FrmRegister()
+
+        frmRegister.LimpiarTablaVentas()
+
+        FrmVentas.Hide()
+        frmRegister.Show()
+
+    End Sub
+
+    Private Sub FrmVentas(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
+        Application.Exit()
+    End Sub
+
+
+
 End Class
